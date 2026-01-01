@@ -1,5 +1,6 @@
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
-import AppShell from "@/components/AppShell";
+import AppShell from "@/components/layout/AppShell";
 
 export default function RootLayout({
   children,
@@ -10,6 +11,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
           <AppShell>{children}</AppShell>
+          <Toaster/>
       </body>
     </html>
   );
