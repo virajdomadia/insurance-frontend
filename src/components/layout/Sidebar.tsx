@@ -9,6 +9,7 @@ import {
   Users,
   UserPlus,
   ClipboardList,
+  Search,
 } from "lucide-react";
 
 type Role = "citizen" | "ngo" | "admin";
@@ -41,6 +42,10 @@ export function Sidebar() {
               <Home size={18} /> Dashboard
             </Link>
 
+            <Link href="/citizen/check-eligibility" className="flex items-center gap-2 p-2 rounded hover:bg-slate-100">
+              <Search size={18} /> Check Eligibility
+            </Link>
+
             <Link href="/citizen/policy-wallet" className="flex items-center gap-2 p-2 rounded hover:bg-slate-100">
               <Shield size={18} /> Policy Wallet
             </Link>
@@ -58,6 +63,10 @@ export function Sidebar() {
 
             <Link href="/ngo/dashboard" className="flex items-center gap-2 p-2 rounded hover:bg-slate-100">
               <Users size={18} /> Dashboard
+            </Link>
+
+            <Link href="/ngo/check-eligibility" className="flex items-center gap-2 p-2 rounded hover:bg-slate-100">
+              <Search size={18} /> Check Eligibility
             </Link>
 
             <Link href="/ngo/beneficiaries" className="flex items-center gap-2 p-2 rounded hover:bg-slate-100">

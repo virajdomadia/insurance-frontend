@@ -35,21 +35,21 @@ export default function LoaderPage() {
 
   return (
     <div
-      className={`h-screen flex flex-col items-center justify-center bg-white
+      className={`h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700
       transition-opacity duration-700 ease-out
       ${visible ? "opacity-100" : "opacity-0"}`}
     >
-      <Loader2 className="h-10 w-10 text-indigo-600 animate-spin mb-4" />
+      <Loader2 className="h-8 w-8 md:h-10 md:w-10 text-white animate-spin mb-4" />
 
-      <h1 className="text-3xl font-bold text-indigo-600">
+      <h1 className="text-2xl md:text-3xl font-bold text-white px-4 text-center">
         NGO Insurance
       </h1>
 
-      <p className="text-sm text-slate-500 mt-2 transition-all duration-300">
+      <p className="text-xs md:text-sm text-blue-100 mt-2 transition-all duration-300 px-4 text-center">
         {messages[messageIndex]}
       </p>
 
-      <div className="absolute bottom-6 text-xs text-slate-400">
+      <div className="absolute bottom-4 md:bottom-6 text-xs text-blue-200 px-4 text-center">
         Demo environment · Investor preview
       </div>
     </div>

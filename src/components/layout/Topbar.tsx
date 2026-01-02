@@ -32,18 +32,19 @@ export function Topbar() {
   };
 
   return (
-    <header className="h-14 bg-white border-b px-6 flex items-center justify-between">
-      <span className="text-sm text-slate-500">
-        Demo Mode · Investor Preview
+    <header className="h-16 bg-white/95 backdrop-blur-sm border-b border-white/20 shadow-sm px-4 md:px-6 flex items-center justify-between">
+      <span className="text-xs md:text-sm text-blue-600 font-medium truncate">
+        <span className="hidden sm:inline">Demo Mode · Investor Preview</span>
+        <span className="sm:hidden">Demo Mode</span>
       </span>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 md:gap-3">
         {/* ROLE SWITCHER */}
         {role && (
           <select
             value={role}
             onChange={(e) => switchRole(e.target.value as Role)}
-            className="border rounded px-2 py-1 text-sm bg-white"
+            className="border border-blue-200 rounded-lg px-2 md:px-3 py-1.5 text-xs md:text-sm bg-white text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="citizen">Citizen</option>
             <option value="ngo">NGO</option>
@@ -51,7 +52,7 @@ export function Topbar() {
           </select>
         )}
 
-        <Button variant="outline" size="sm" onClick={logout}>
+        <Button variant="outline" size="sm" onClick={logout} className="bg-white hover:bg-blue-50 border-blue-200 text-blue-700 text-xs md:text-sm px-3 md:px-4">
           Logout
         </Button>
       </div>

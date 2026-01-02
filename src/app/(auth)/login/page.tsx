@@ -72,14 +72,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-slate-50 px-4">
-      <Card className="w-full max-w-md p-8">
+    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 px-4 py-8">
+      <Card className="w-full max-w-md p-6 md:p-8 shadow-2xl border-0">
         {/* BRAND */}
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-indigo-600">
+          <h1 className="text-xl md:text-2xl font-bold text-blue-600">
             NGO Insurance
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs md:text-sm text-slate-600 mt-1">
             Secure access for citizens, NGOs & CSR partners
           </p>
         </div>
@@ -87,12 +87,12 @@ export default function LoginPage() {
         {/* PHONE STEP */}
         {step === "PHONE" && (
           <>
-            <label className="text-sm font-medium">
+            <label className="text-xs md:text-sm font-medium">
               Mobile number
             </label>
 
             <div className="flex mt-2">
-              <span className="px-3 flex items-center border border-r-0 rounded-l text-slate-500 text-sm bg-slate-100">
+              <span className="px-2 md:px-3 flex items-center border border-r-0 rounded-l text-slate-600 text-xs md:text-sm bg-blue-50 border-blue-200">
                 +91
               </span>
               <Input
@@ -100,12 +100,12 @@ export default function LoginPage() {
                 value={phone}
                 maxLength={10}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                className="rounded-l-none"
+                className="rounded-l-none border-blue-200 focus:border-blue-400 text-sm md:text-base"
               />
             </div>
 
             <Button
-              className="w-full mt-6"
+              className="w-full mt-4 md:mt-6 bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-base"
               disabled={phone.length !== 10}
               onClick={submitPhone}
             >
@@ -117,7 +117,7 @@ export default function LoginPage() {
         {/* OTP STEP */}
         {step === "OTP" && (
           <>
-            <p className="text-sm text-slate-600 mb-4">
+            <p className="text-xs md:text-sm text-slate-600 mb-4">
               Enter the 6-digit OTP sent to <br />
               <span className="font-medium">
                 +91 {phone.replace(/.(?=.{2})/g, "•")}
@@ -129,11 +129,11 @@ export default function LoginPage() {
               value={otp}
               maxLength={6}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-              className="tracking-widest text-center text-lg"
+              className="tracking-widest text-center text-base md:text-lg border-blue-200 focus:border-blue-400"
             />
 
             <Button
-              className="w-full mt-4"
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-base"
               disabled={otp.length !== 6}
               onClick={submitOtp}
             >
@@ -146,7 +146,7 @@ export default function LoginPage() {
               ) : (
                 <button
                   onClick={submitPhone}
-                  className="text-indigo-600 hover:underline"
+                  className="text-blue-600 hover:underline font-medium"
                 >
                   Resend OTP
                 </button>
