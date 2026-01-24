@@ -6,8 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import RouteGuard from "@/components/auth/RouteGuard";
-import { getEligiblePolicies, type InsurancePolicy } from "@/data/insurancePolicies";
-import { fakeApi } from "@/lib/fakeApi";
+import { api } from "@/lib/api-client";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+
+interface PolicyRecommendation {
+  name: string;
+  coverage: number;
+  premium: number;
+  description: string;
+  provider?: string;
+  benefits?: string[];
+}
 
 interface FormData {
   name: string;
@@ -18,6 +29,7 @@ interface FormData {
 }
 
 export default function CitizenCheckEligibilityPage() {
+  const { toast } = useToast();
   const [formData, setFormData] = useState<FormData>({
     name: "",
     age: "",
@@ -25,7 +37,7 @@ export default function CitizenCheckEligibilityPage() {
     district: "",
     bpl: false,
   });
-  const [eligiblePolicies, setEligiblePolicies] = useState<InsurancePolicy[]>([]);
+  const [eligiblePolicies, setEligiblePolicies] = useState<PolicyRecommendation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -34,26 +46,38 @@ export default function CitizenCheckEligibilityPage() {
     setIsLoading(true);
     setIsSubmitted(false);
 
-    // Simulate API call
-    await fakeApi(true, 1000);
+    try {
+      const response = await api.checkEligibility({
+        age: parseInt(formData.age),
+        income: parseFloat(formData.income),
+        bplStatus: formData.bpl,
+      });
 
-    const policies = getEligiblePolicies({
-      age: formData.age ? parseInt(formData.age) : undefined,
-      income: formData.income ? parseInt(formData.income) : undefined,
-      bpl: formData.bpl,
-      district: formData.district,
-    });
+      // Enhance API response with UI-specific fields if needed
+      const policiesWithDetails = response.policies.map((p: any) => ({
+        ...p,
+        provider: "Government Scheme",
+        benefits: ["Cashless Treatment", "Family Floater", "No Waiting Period"],
+      }));
 
-    setEligiblePolicies(policies);
-    setIsLoading(false);
-    setIsSubmitted(true);
+      setEligiblePolicies(policiesWithDetails);
+      setIsSubmitted(true);
+    } catch (error: any) {
+      toast({
+        title: "Error checking eligibility",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
@@ -137,16 +161,15 @@ export default function CitizenCheckEligibilityPage() {
             </div>
 
             <div className="flex items-center space-x-2">
-              <input
+              <Checkbox
                 id="bpl"
-                name="bpl"
-                type="checkbox"
                 checked={formData.bpl}
-                onChange={handleChange}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                onCheckedChange={(checked) =>
+                  setFormData(prev => ({ ...prev, bpl: checked as boolean }))
+                }
               />
-              <label htmlFor="bpl" className="text-sm font-medium text-slate-700">
-                Below Poverty Line (BPL)
+              <label htmlFor="bpl" className="text-sm font-medium text-slate-700 cursor-pointer">
+                Below Poverty Line (BPL) Card Holder
               </label>
             </div>
 
@@ -155,13 +178,20 @@ export default function CitizenCheckEligibilityPage() {
               disabled={isLoading}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
-              {isLoading ? "Checking Eligibility..." : "Check Eligibility"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Checking Eligibility...
+                </>
+              ) : (
+                "Check Eligibility"
+              )}
             </Button>
           </form>
         </Card>
 
         {isSubmitted && (
-          <div className="space-y-4">
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="text-lg md:text-xl font-semibold text-white">
               Eligible Insurance Schemes ({eligiblePolicies.length})
             </h2>
@@ -169,26 +199,23 @@ export default function CitizenCheckEligibilityPage() {
             {eligiblePolicies.length === 0 ? (
               <Card className="p-4 md:p-6 bg-white shadow-lg border-0">
                 <p className="text-slate-600 text-sm md:text-base">
-                  No eligible insurance schemes found based on your details. Please check your information or contact support.
+                  No eligible insurance schemes found based on your details.
                 </p>
               </Card>
             ) : (
               <div className="space-y-4">
-                {eligiblePolicies.map((policy) => (
-                  <Card key={policy.id} className="p-4 md:p-6 bg-white shadow-lg border-0">
+                {eligiblePolicies.map((policy, index) => (
+                  <Card key={index} className="p-4 md:p-6 bg-white shadow-lg border-0 hover:shadow-xl transition-shadow">
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
                       <div className="flex-1">
                         <h3 className="font-semibold text-base md:text-lg text-slate-800 mb-1">
                           {policy.name}
                         </h3>
                         <p className="text-xs md:text-sm text-slate-600 mb-2">
-                          {policy.provider}
-                        </p>
-                        <p className="text-xs md:text-sm text-slate-500">
                           {policy.description}
                         </p>
                       </div>
-                      <Badge className="bg-green-600 text-white shrink-0">
+                      <Badge className="bg-green-600 text-white shrink-0 self-start">
                         Eligible
                       </Badge>
                     </div>
@@ -197,27 +224,26 @@ export default function CitizenCheckEligibilityPage() {
                       <div>
                         <p className="text-xs text-slate-500">Coverage</p>
                         <p className="text-sm md:text-base font-semibold text-slate-800">
-                          {policy.coverage}
+                          ₹{policy.coverage.toLocaleString()}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-500">Premium</p>
+                        <p className="text-xs text-slate-500">Annual Premium</p>
                         <p className="text-sm md:text-base font-semibold text-slate-800">
-                          {policy.premium}
+                          {policy.premium === 0 ? "Free" : `₹${policy.premium.toLocaleString()}`}
                         </p>
                       </div>
                     </div>
 
                     <div className="mt-4">
                       <p className="text-xs font-medium text-slate-700 mb-2">Key Benefits:</p>
-                      <ul className="space-y-1">
-                        {policy.benefits.map((benefit, idx) => (
-                          <li key={idx} className="text-xs md:text-sm text-slate-600 flex items-start">
-                            <span className="text-blue-600 mr-2">•</span>
+                      <div className="flex flex-wrap gap-2">
+                        {policy.benefits?.map((benefit, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
                             {benefit}
-                          </li>
+                          </Badge>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   </Card>
                 ))}
@@ -229,4 +255,3 @@ export default function CitizenCheckEligibilityPage() {
     </RouteGuard>
   );
 }
-
