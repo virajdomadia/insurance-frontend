@@ -1,0 +1,172 @@
+
+> insurance-frontend@0.1.0 lint
+> eslint
+
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\check-user.ts
+  3:8  warning  'connectDB' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\debug-db.js
+  1:18  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  2:1   error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\scripts\seed.ts
+  30:15  warning  'admin' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  73:15  warning  'beneficiary3' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\scripts\verify-full-db.ts
+  17:8  warning  'EligibilityCheck' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\(auth)\login\page.tsx
+   5:10  warning  'Card' is defined but never used          @typescript-eslint/no-unused-vars
+  45:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\admin\check-eligibility\page.tsx
+  11:19  warning  'Upload' is defined but never used        @typescript-eslint/no-unused-vars
+  65:67  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  81:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\admin\dashboard\page.tsx
+  44:6   warning  React Hook useEffect has a missing dependency: 'fetchStats'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  51:14  warning  'error' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+  51:21  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\api\auth\login\route.ts
+  65:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\api\auth\me\route.ts
+  26:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\api\auth\refresh\route.ts
+  8:28  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\api\eligibility\route.ts
+   12:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  113:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\citizen\check-eligibility\page.tsx
+  61:61  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  76:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  76:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\citizen\claims\page.tsx
+  29:6   warning  React Hook useEffect has a missing dependency: 'fetchClaims'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  36:21  error    Unexpected any. Specify a different type                                                                        @typescript-eslint/no-explicit-any
+  70:24  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                 react/no-unescaped-entities
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\citizen\dashboard\page.tsx
+  13:42  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  14:44  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  15:40  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  20:6   warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  33:21  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\citizen\policy-wallet\page.tsx
+  29:6   warning  React Hook useEffect has a missing dependency: 'fetchPolicies'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  36:14  warning  'error' is defined but never used                                                                                 @typescript-eslint/no-unused-vars
+  36:21  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  76:22  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                   react/no-unescaped-entities
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\ngo\add-beneficiary\page.tsx
+  54:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\ngo\beneficiaries\page.tsx
+  28:6   warning  React Hook useEffect has a missing dependency: 'fetchBeneficiaries'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  35:21  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  69:42  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                        react/no-unescaped-entities
+  69:58  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                        react/no-unescaped-entities
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\ngo\check-eligibility\page.tsx
+  57:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\ngo\claims\page.tsx
+  29:6   warning  React Hook useEffect has a missing dependency: 'fetchClaims'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  36:14  warning  'error' is defined but never used                                                                               @typescript-eslint/no-unused-vars
+  36:21  error    Unexpected any. Specify a different type                                                                        @typescript-eslint/no-explicit-any
+  78:24  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                 react/no-unescaped-entities
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\ngo\dashboard\page.tsx
+  12:54  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  13:40  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  18:6   warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  29:21  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\page.tsx
+  24:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\app\page.tsx:24:5
+  22 |
+  23 |   useEffect(() => {
+> 24 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  25 |   }, []);
+  26 |
+  27 |   const features = [  react-hooks/set-state-in-effect
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\components\auth\RouteGuard.tsx
+  49:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\components\auth\RouteGuard.tsx:49:5
+  47 |
+  48 |     // ✅ Role is allowed
+> 49 |     setIsAllowed(true);
+     |     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  50 |   }, [allowedRole, pathname, router]);
+  51 |
+  52 |   // ⛔ Block render until validated  react-hooks/set-state-in-effect
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\components\layout\BottomNav.tsx
+  9:3  warning  'Users' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\components\layout\Topbar.tsx
+  16:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\components\layout\Topbar.tsx:16:5
+  14 |   useEffect(() => {
+  15 |     const storedRole = localStorage.getItem("role") as Role;
+> 16 |     setRole(storedRole);
+     |     ^^^^^^^ Avoid calling setState() directly within an effect
+  17 |   }, []);
+  18 |
+  19 |   const switchRole = (newRole: Role) => {  react-hooks/set-state-in-effect
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\components\ui\use-toast.ts
+  22:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  27:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\lib\api-client.ts
+  63:37  error  Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+  67:9   error  'token' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\lib\auth.ts
+  39:75  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\src\lib\mongodb.ts
+  23:5  error  'cached' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\Viraj\Desktop\insurance\insurance-frontend\tailwind.config.ts
+  71:15  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+✖ 61 problems (40 errors, 21 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+

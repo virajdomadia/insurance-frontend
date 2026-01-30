@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/lib/mongodb';
+import EligibilityCheck from '@/models/EligibilityCheck';
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
-        const { age, income, bplStatus } = body;
+        await connectDB();
+
+        let body;
+        try {
+            body = await request.json();
+        } catch (e) {
+            return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+        }
+
+        const { age, income, bplStatus, name, district } = body;
 
         // Validation
         if (age === undefined || income === undefined || bplStatus === undefined) {
@@ -72,6 +82,22 @@ export async function POST(request: NextRequest) {
             });
         }
 
+        // Save to MongoDB
+        try {
+            await EligibilityCheck.create({
+                name: name || 'Anonymous',
+                age,
+                income,
+                bplStatus,
+                district: district || 'Unknown',
+                eligiblePolicies,
+                checkDate: new Date(),
+            });
+        } catch (dbError) {
+            console.error("Failed to save eligibility check log:", dbError);
+            // We don't want to fail the request just because logging failed, but good to know
+        }
+
         return NextResponse.json(
             {
                 eligible: eligiblePolicies.length > 0,
@@ -84,10 +110,10 @@ export async function POST(request: NextRequest) {
             },
             { status: 200 }
         );
-    } catch (error) {
+    } catch (error: any) {
         console.error('Check eligibility error:', error);
         return NextResponse.json(
-            { error: 'Internal Server Error', message: 'Failed to check eligibility' },
+            { error: 'Internal Server Error', message: error.message, stack: error.stack },
             { status: 500 }
         );
     }

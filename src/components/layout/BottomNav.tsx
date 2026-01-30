@@ -31,15 +31,15 @@ export function BottomNav() {
 
   const navItems = {
     citizen: [
-      { href: "/citizen/dashboard", icon: Home, label: "Dashboard" },
-      { href: "/citizen/check-eligibility", icon: Search, label: "Eligibility" },
-      { href: "/citizen/policy-wallet", icon: Shield, label: "Policy" },
+      { href: "/citizen/dashboard", icon: Home, label: "Home" },
+      { href: "/citizen/check-eligibility", icon: Search, label: "Eligible" },
+      { href: "/citizen/policy-wallet", icon: Shield, label: "Wallet" },
       { href: "/citizen/claims", icon: FileText, label: "Claims" },
     ],
     ngo: [
-      { href: "/ngo/dashboard", icon: Home, label: "Dashboard" },
-      { href: "/ngo/check-eligibility", icon: Search, label: "Eligibility" },
-      { href: "/ngo/beneficiaries", icon: ClipboardList, label: "Beneficiaries" },
+      { href: "/ngo/dashboard", icon: Home, label: "Home" },
+      { href: "/ngo/check-eligibility", icon: Search, label: "Check" },
+      { href: "/ngo/beneficiaries", icon: ClipboardList, label: "Users" },
       { href: "/ngo/add-beneficiary", icon: UserPlus, label: "Add" },
       { href: "/ngo/claims", icon: FileText, label: "Claims" },
     ],
@@ -51,25 +51,28 @@ export function BottomNav() {
   const items = navItems[role] || [];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 md:hidden">
-      <div className="flex items-center justify-around h-16 px-2">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-slate-200 shadow-[0_-4px_10px_rgba(0,0,0,0.03)] z-50 md:hidden pb-safe">
+      <div className="flex items-center justify-around h-16 px-1">
         {items.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
-          
+
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 flex-1 h-full transition-colors",
+                "flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all duration-300 relative",
                 isActive
                   ? "text-blue-600"
-                  : "text-gray-500 hover:text-blue-600"
+                  : "text-slate-400 hover:text-slate-600"
               )}
             >
-              <Icon size={20} className={cn(isActive && "text-blue-600")} />
-              <span className="text-xs font-medium">{item.label}</span>
+              {isActive && (
+                <span className="absolute top-0 w-8 h-0.5 bg-blue-600 rounded-b-full shadow-[0_2px_8px_rgba(37,99,235,0.4)]" />
+              )}
+              <Icon size={isActive ? 22 : 20} strokeWidth={isActive ? 2.5 : 2} className={cn("transition-transform duration-300", isActive && "-translate-y-0.5")} />
+              <span className={cn("text-[10px] font-medium transition-all", isActive ? "font-bold" : "font-normal")}>{item.label}</span>
             </Link>
           );
         })}

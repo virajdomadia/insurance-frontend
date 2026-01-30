@@ -72,73 +72,83 @@ export default function CitizenDashboard() {
         </div>
       ) : (
         <>
-          <div className="mb-4 md:mb-6">
-            <h1 className="text-xl md:text-2xl font-semibold text-white">
+          <div className="mb-6 md:mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
               Welcome, {profile?.name || profile?.email}
             </h1>
-            <p className="text-blue-100 text-xs md:text-sm">
+            <p className="text-slate-500 text-sm mt-1">
               Manage your insurance policies and claims
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <Card className="p-4 md:p-6 bg-white shadow-lg border-0">
-              <h3 className="font-semibold text-base md:text-lg text-slate-800">Active Policy</h3>
+            <Card className="p-6 bg-white shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-base md:text-lg text-slate-800 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span> Active Policy
+              </h3>
               {activePolicy ? (
                 <>
-                  <p className="mt-3 md:mt-4 text-xs md:text-sm text-slate-600">
-                    {activePolicy.policyType} Coverage (₹{(activePolicy.coverage / 1000).toFixed(0)}k)
+                  <p className="mt-4 text-sm text-slate-600 font-medium">
+                    {activePolicy.policyType}
                   </p>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Valid until {new Date(activePolicy.endDate).toLocaleDateString()}
+                  <p className="text-3xl font-bold text-slate-900 mt-1">
+                    ₹{(activePolicy.coverage / 1000).toFixed(0)}k <span className="text-base font-normal text-slate-500">coverage</span>
                   </p>
-                  <Badge className={`mt-3 md:mt-4 text-xs ${activePolicy.status === 'ACTIVE' ? 'bg-green-600' : 'bg-yellow-600'}`}>
-                    {activePolicy.status}
-                  </Badge>
+
+                  <div className="mt-4 flex items-center justify-between">
+                    <p className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                      Expires: {new Date(activePolicy.endDate).toLocaleDateString()}
+                    </p>
+                    <Badge className={`text-xs ${activePolicy.status === 'ACTIVE' ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-yellow-100 text-yellow-700'}`}>
+                      {activePolicy.status}
+                    </Badge>
+                  </div>
                 </>
               ) : (
                 <div className="mt-4">
                   <p className="text-sm text-slate-500 mb-3">No active policies found.</p>
-                  <Badge variant="outline" className="text-xs border-blue-600 text-blue-600">
+                  <Badge variant="outline" className="text-xs border-blue-600 text-blue-600 bg-blue-50">
                     Check Eligibility
                   </Badge>
                 </div>
               )}
             </Card>
 
-            <Card className="p-4 md:p-6 bg-white shadow-lg border-0">
+            <Card className="p-6 bg-white shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-base md:text-lg text-slate-800">Support Status</h3>
-              <p className="mt-3 md:mt-4 text-xs md:text-sm text-slate-600">
+              <p className="mt-2 text-sm text-slate-600">
                 Need help with your insurance?
               </p>
-              <div className="mt-4 flex gap-2">
-                <Badge className="bg-blue-600 text-xs cursor-pointer hover:bg-blue-700">
-                  Contact NGO
+              <div className="mt-6 flex gap-2">
+                <Badge className="bg-blue-600 text-xs cursor-pointer hover:bg-blue-700 py-1.5 px-3">
+                  Contact NGO Partner
                 </Badge>
               </div>
             </Card>
 
-            <Card className="p-4 md:p-6 md:col-span-2 bg-white shadow-lg border-0">
-              <h3 className="font-semibold text-base md:text-lg text-slate-800">Claims History</h3>
+            <Card className="p-6 md:col-span-2 bg-white shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-base md:text-lg text-slate-800 mb-4">Claims History</h3>
 
               {claims.length > 0 ? (
-                <div className="space-y-3 mt-4">
+                <div className="space-y-3">
                   {claims.map((c) => (
-                    <div key={c._id} className="flex justify-between items-center border-b pb-2 last:border-0 last:pb-0">
+                    <div key={c._id} className="flex justify-between items-center border-b border-slate-100 pb-3 last:border-0 last:pb-0">
                       <div>
                         <p className="text-sm font-medium text-slate-800">{c.policyType} Claim</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 mt-0.5">
                           {new Date(c.createdAt).toLocaleDateString()} — ₹{c.amount.toLocaleString()}
                         </p>
                       </div>
-                      <Badge variant={c.status === 'APPROVED' ? 'default' : 'secondary'} className={`text-xs ${c.status === 'APPROVED' ? 'bg-green-600' : c.status === 'REJECTED' ? 'bg-red-600 text-white' : 'bg-yellow-100 text-yellow-800'}`}>
+                      <Badge variant={c.status === 'APPROVED' ? 'default' : 'secondary'} className={`text-xs ${c.status === 'APPROVED' ? 'bg-green-100 text-green-700' : c.status === 'REJECTED' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
                         {c.status}
                       </Badge>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="mt-4 text-sm text-slate-500">No claims submitted yet.</p>
+                <div className="text-center py-8 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                  <p className="text-sm text-slate-500">No claims submitted yet.</p>
+                </div>
               )}
             </Card>
           </div>

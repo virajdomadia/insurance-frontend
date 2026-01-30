@@ -1,0 +1,111 @@
+
+Running 4 tests using 4 workers
+
+  ✘  3 [chromium] › tests\full-features.spec.ts:6:9 › Full System Features › Homepage Interactive Elements (7.4s)
+  ✘  1 [chromium] › tests\full-features.spec.ts:23:9 › Full System Features › Citizen: Eligibility Check Flow (7.3s)
+  ✘  2 [chromium] › tests\full-features.spec.ts:60:9 › Full System Features › Admin: Dashboard Stats (7.3s)
+  ✘  4 [chromium] › tests\full-features.spec.ts:46:9 › Full System Features › NGO: Manage Beneficiaries (7.6s)
+
+
+  1) [chromium] › tests\full-features.spec.ts:6:9 › Full System Features › Homepage Interactive Elements 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('Secure Insurance for Every Citizen')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText('Secure Insurance for Every Citizen')[22m
+
+
+       8 |
+       9 |         // Check hero section and CTA
+    > 10 |         await expect(page.getByText('Secure Insurance for Every Citizen')).toBeVisible(); // From my finding in login page, but wait, landing page text is "NGO Insurance Platform" or similar.
+         |                                                                            ^
+      11 |         // Let's check based on the actual landing page update I did: "NGO Insurance Platform"
+      12 |         await expect(page.getByRole('heading', { name: 'NGO Insurance Platform' })).toBeVisible();
+      13 |
+        at C:\Users\Viraj\Desktop\insurance\insurance-frontend\tests\full-features.spec.ts:10:76
+
+    Error Context: test-results\full-features-Full-System--b0cf4-mepage-Interactive-Elements-chromium\error-context.md
+
+  2) [chromium] › tests\full-features.spec.ts:23:9 › Full System Features › Citizen: Eligibility Check Flow 
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected: [32m"http://localhost:3000/[7mcitizen/dashboard[27m"[39m
+    Received: [31m"http://localhost:3000/[7mlogin[27m"[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveURL" with timeout 5000ms[22m
+    [2m    9 × unexpected value "http://localhost:3000/login"[22m
+
+
+      28 |         await page.getByRole('button', { name: /sign in/i }).click();
+      29 |
+    > 30 |         await expect(page).toHaveURL('/citizen/dashboard');
+         |                            ^
+      31 |
+      32 |         // Navigate to Eligibility
+      33 |         // Assuming there is a link or button. I might need to guess the navigation or go directly.
+        at C:\Users\Viraj\Desktop\insurance\insurance-frontend\tests\full-features.spec.ts:30:28
+
+    Error Context: test-results\full-features-Full-System--40e32-izen-Eligibility-Check-Flow-chromium\error-context.md
+
+  3) [chromium] › tests\full-features.spec.ts:46:9 › Full System Features › NGO: Manage Beneficiaries 
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected: [32m"http://localhost:3000/[7mngo/dashboard[27m"[39m
+    Received: [31m"http://localhost:3000/[7mlogin[27m"[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveURL" with timeout 5000ms[22m
+    [2m    9 × unexpected value "http://localhost:3000/login"[22m
+
+
+      51 |         await page.getByRole('button', { name: /sign in/i }).click();
+      52 |
+    > 53 |         await expect(page).toHaveURL('/ngo/dashboard');
+         |                            ^
+      54 |
+      55 |         // Check for "Add Beneficiary" or similar button/link
+      56 |         // Ensure Dashboard loads with some content
+        at C:\Users\Viraj\Desktop\insurance\insurance-frontend\tests\full-features.spec.ts:53:28
+
+    Error Context: test-results\full-features-Full-System-Features-NGO-Manage-Beneficiaries-chromium\error-context.md
+
+  4) [chromium] › tests\full-features.spec.ts:60:9 › Full System Features › Admin: Dashboard Stats ─
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected: [32m"http://localhost:3000/[7madmin/dashboard[27m"[39m
+    Received: [31m"http://localhost:3000/[7mlogin[27m"[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveURL" with timeout 5000ms[22m
+    [2m    9 × unexpected value "http://localhost:3000/login"[22m
+
+
+      65 |         await page.getByRole('button', { name: /sign in/i }).click();
+      66 |
+    > 67 |         await expect(page).toHaveURL('/admin/dashboard');
+         |                            ^
+      68 |
+      69 |         // Verify stats or user list
+      70 |         // Should have "Total Users" or similar
+        at C:\Users\Viraj\Desktop\insurance\insurance-frontend\tests\full-features.spec.ts:67:28
+
+    Error Context: test-results\full-features-Full-System-Features-Admin-Dashboard-Stats-chromium\error-context.md
+
+  4 failed
+    [chromium] › tests\full-features.spec.ts:6:9 › Full System Features › Homepage Interactive Elements 
+    [chromium] › tests\full-features.spec.ts:23:9 › Full System Features › Citizen: Eligibility Check Flow 
+    [chromium] › tests\full-features.spec.ts:46:9 › Full System Features › NGO: Manage Beneficiaries 
+    [chromium] › tests\full-features.spec.ts:60:9 › Full System Features › Admin: Dashboard Stats ──

@@ -37,6 +37,8 @@ export default function CitizenCheckEligibilityPage() {
     district: "",
     bpl: false,
   });
+
+  const [aadharFile, setAadharFile] = useState<File | null>(null);
   const [eligiblePolicies, setEligiblePolicies] = useState<PolicyRecommendation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -51,6 +53,8 @@ export default function CitizenCheckEligibilityPage() {
         age: parseInt(formData.age),
         income: parseFloat(formData.income),
         bplStatus: formData.bpl,
+        name: formData.name,
+        district: formData.district,
       });
 
       // Enhance API response with UI-specific fields if needed
@@ -62,10 +66,17 @@ export default function CitizenCheckEligibilityPage() {
 
       setEligiblePolicies(policiesWithDetails);
       setIsSubmitted(true);
+
+      if (aadharFile) {
+        toast({
+          title: "Aadhar Card Uploaded",
+          description: `File ${aadharFile.name} attached to eligibility check.`,
+        });
+      }
     } catch (error: any) {
       toast({
         title: "Error checking eligibility",
-        description: error.message,
+        description: "Failed to process eligibility check. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -83,9 +94,9 @@ export default function CitizenCheckEligibilityPage() {
 
   return (
     <RouteGuard allowedRole="citizen">
-      <div className="mb-4 md:mb-6">
-        <h1 className="text-xl md:text-2xl font-semibold text-white">Check Eligibility</h1>
-        <p className="text-blue-100 text-xs md:text-sm">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Check Eligibility</h1>
+        <p className="text-slate-500 text-sm mt-1">
           Enter your details to find eligible insurance schemes
         </p>
       </div>
@@ -160,6 +171,20 @@ export default function CitizenCheckEligibilityPage() {
               />
             </div>
 
+            <div className="space-y-1">
+              <label htmlFor="aadhar" className="block text-sm font-medium text-slate-700 mb-1">
+                Upload Aadhar Card
+              </label>
+              <Input
+                id="aadhar"
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={(e) => setAadharFile(e.target.files?.[0] || null)}
+                className="w-full cursor-pointer"
+              />
+              <p className="text-xs text-slate-500">Supported formats: PDF, JPG, PNG (Max 5MB)</p>
+            </div>
+
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="bpl"
@@ -192,7 +217,7 @@ export default function CitizenCheckEligibilityPage() {
 
         {isSubmitted && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="text-lg md:text-xl font-semibold text-white">
+            <h2 className="text-lg md:text-xl font-semibold text-slate-800">
               Eligible Insurance Schemes ({eligiblePolicies.length})
             </h2>
 

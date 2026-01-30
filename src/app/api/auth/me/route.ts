@@ -23,10 +23,14 @@ export async function GET(request: NextRequest) {
         }
 
         return NextResponse.json(user, { status: 200 });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Get profile error:', error);
         return NextResponse.json(
-            { error: 'Internal Server Error', message: 'Failed to fetch user profile' },
+            {
+                error: 'Internal Server Error',
+                message: error.message,
+                stack: error.stack
+            },
             { status: 500 }
         );
     }

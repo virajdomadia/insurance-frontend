@@ -7,6 +7,7 @@ export interface IBeneficiary extends Document {
     income: number;
     bplStatus: boolean;
     ngoId?: string;
+    district: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -33,6 +34,12 @@ const BeneficiarySchema = new Schema<IBeneficiary>(
             type: Boolean,
             required: true,
             default: false,
+        },
+        district: {
+            type: String,
+            required: true,
+            trim: true,
+            default: 'Unknown', // Default for existing records
         },
         ngoId: {
             type: String,

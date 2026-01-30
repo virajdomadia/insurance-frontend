@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
         await connectDB();
 
         const body = await request.json();
-        const { email, password, name } = body;
+        const { email, password, name, role } = body;
 
         // Validation
         if (!email || !password) {
@@ -32,6 +32,10 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Role validation
+        const validRoles = [UserRole.CITIZEN, UserRole.NGO];
+        const userRole = role && validRoles.includes(role) ? role : UserRole.CITIZEN;
+
         // Check if user already exists
         const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
@@ -46,7 +50,7 @@ export async function POST(request: NextRequest) {
             email: email.toLowerCase(),
             name,
             passwordHash,
-            role: UserRole.CITIZEN,
+            role: userRole,
             isActive: true,
         });
 

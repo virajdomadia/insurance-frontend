@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
         const totalPolicies = await Policy.countDocuments();
 
         // Calculate total claim amount
+        // Calculate total claim amount
         const claimAggregation = await Claim.aggregate([
             {
                 $group: {
@@ -38,6 +39,53 @@ export async function GET(request: NextRequest) {
         ]);
 
         const totalClaimAmount = claimAggregation.length > 0 ? claimAggregation[0].totalAmount : 0;
+
+        // Aggregation: Coverage by District (Beneficiaries)
+        const coverageByDistrictRaw = await Beneficiary.aggregate([
+            {
+                $group: {
+                    _id: '$district',
+                    families: { $sum: 1 },
+                },
+            },
+            { $sort: { families: -1 } },
+            { $limit: 5 } // Top 5 districts
+        ]);
+
+        const coverageByDistrict = coverageByDistrictRaw.map(item => ({
+            district: item._id || 'Unknown',
+            families: item.families
+        }));
+
+        // Aggregation: Claims Trend (Monthly)
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+        sixMonthsAgo.setDate(1); // Start of the month
+
+        const claimsTrendRaw = await Claim.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: sixMonthsAgo }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        month: { $month: '$createdAt' },
+                        year: { $year: '$createdAt' }
+                    },
+                    claims: { $sum: 1 }
+                }
+            },
+            { $sort: { '_id.year': 1, '_id.month': 1 } }
+        ]);
+
+        // Format claims trend for frontend (Month Name)
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const claimsTrend = claimsTrendRaw.map(item => ({
+            month: monthNames[item._id.month - 1],
+            claims: item.claims
+        }));
 
         return NextResponse.json(
             {
@@ -55,6 +103,8 @@ export async function GET(request: NextRequest) {
                     totalAmount: totalClaimAmount,
                 },
                 policies: totalPolicies,
+                coverage: coverageByDistrict,
+                trends: claimsTrend,
             },
             { status: 200 }
         );

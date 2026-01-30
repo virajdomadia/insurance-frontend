@@ -20,10 +20,10 @@ declare global {
   var mongoose: MongooseCache | undefined;
 }
 
-let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
+let cached: MongooseCache = (global as any).mongoose || { conn: null, promise: null };
 
-if (!global.mongoose) {
-  global.mongoose = cached;
+if (!(global as any).mongoose) {
+  (global as any).mongoose = cached;
 }
 
 async function connectDB(): Promise<typeof mongoose> {
@@ -36,8 +36,10 @@ async function connectDB(): Promise<typeof mongoose> {
       bufferCommands: false,
     };
 
+    console.log('🔄 MONGODB: Connecting to', MONGODB_URI.split('@')[1] || '...confidential...');
+
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      console.log('✅ MongoDB connected successfully');
+      console.log('✅ MONGODB: Connected successfully');
       return mongoose;
     });
   }
@@ -46,7 +48,7 @@ async function connectDB(): Promise<typeof mongoose> {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
-    console.error('❌ MongoDB connection error:', e);
+    console.error('❌ MONGODB: Connection error:', e);
     throw e;
   }
 

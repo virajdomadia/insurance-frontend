@@ -57,12 +57,12 @@ export async function POST(request: NextRequest) {
 
         const { user } = authResult;
         const body = await request.json();
-        const { name, age, income, bplStatus } = body;
+        const { name, age, income, bplStatus, district } = body;
 
         // Validation
-        if (!name || age === undefined || income === undefined || bplStatus === undefined) {
+        if (!name || age === undefined || income === undefined || bplStatus === undefined || !district) {
             return NextResponse.json(
-                { error: 'Bad Request', message: 'name, age, income, and bplStatus are required' },
+                { error: 'Bad Request', message: 'name, age, income, bplStatus, and district are required' },
                 { status: 400 }
             );
         }
@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
             age,
             income,
             bplStatus,
+            district,
             ngoId: user.role === UserRole.NGO ? user.sub : undefined,
         });
 
@@ -83,6 +84,7 @@ export async function POST(request: NextRequest) {
                 age: beneficiary.age,
                 income: beneficiary.income,
                 bplStatus: beneficiary.bplStatus,
+                district: beneficiary.district,
                 ngoId: beneficiary.ngoId,
                 createdAt: beneficiary.createdAt,
                 updatedAt: beneficiary.updatedAt,

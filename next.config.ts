@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Mongoose doesn't require special handling in Next.js 16
 };
 
 export default nextConfig;

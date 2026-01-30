@@ -122,10 +122,10 @@ export async function apiClient<T = any>(endpoint: string, options: FetchOptions
  */
 export const api = {
     // Auth
-    register: (email: string, password: string, name?: string) =>
+    register: (email: string, password: string, name?: string, role?: string) =>
         apiClient('/auth/register', {
             method: 'POST',
-            body: JSON.stringify({ email, password, name }),
+            body: JSON.stringify({ email, password, name, role }),
         }),
 
     login: async (email: string, password: string) => {
@@ -180,7 +180,7 @@ export const api = {
         apiClient(`/claims/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
 
     // Eligibility
-    checkEligibility: (data: { age: number; income: number; bplStatus: boolean }) =>
+    checkEligibility: (data: { age: number; income: number; bplStatus: boolean; name?: string; district?: string }) =>
         apiClient('/eligibility', { method: 'POST', body: JSON.stringify(data) }),
 
     // Health

@@ -32,16 +32,11 @@ export default function NgoClaimsPage() {
     try {
       setLoading(true);
       const data = await api.getClaims();
-      // NGO sees claims related to their beneficiaries? Or just all for now based on API logic?
-      // The API filters for NGO role implicitly if designed so. 
-      // Current API implementation for NGO returns claims associated with beneficiaries managed by the NGO (if logic implemented)
-      // or returns all claims if filter logic not strictly applied.
-      // Let's assume API returns correct list.
       setClaims(data);
     } catch (error: any) {
       toast({
         title: "Error loading claims",
-        description: error.message,
+        description: "Failed to fetch claims data. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -51,62 +46,83 @@ export default function NgoClaimsPage() {
 
   return (
     <RouteGuard allowedRole="ngo">
-      <div className="mb-4 md:mb-6">
-        <h1 className="text-xl md:text-2xl font-semibold text-white">Claims Support</h1>
-        <p className="text-blue-100 text-xs md:text-sm">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Claims Support</h1>
+        <p className="text-slate-500 text-sm mt-1">
           Track and manage claims for your beneficiaries
         </p>
       </div>
 
-      <div className="space-y-4 w-full max-w-2xl">
+      <div className="space-y-4 w-full max-w-4xl">
         {loading ? (
           // Loading skeletons
           Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="p-4 bg-white shadow-lg border-0">
-              <Skeleton className="h-5 w-40 mb-2" />
-              <Skeleton className="h-4 w-60" />
+            <Card key={i} className="p-6 bg-white shadow-sm border border-slate-200">
+              <Skeleton className="h-6 w-48 mb-3" />
+              <div className="flex gap-4">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-24" />
+              </div>
             </Card>
           ))
         ) : claims.length === 0 ? (
           // Empty state
-          <Card className="p-8 bg-white shadow-lg border-0 text-center">
-            <p className="text-slate-600">No claims found</p>
-            <p className="text-sm text-slate-400 mt-1">
-              No claims have been submitted yet.
+          <Card className="p-12 bg-white shadow-sm border border-slate-200 text-center flex flex-col items-center justify-center">
+            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <p className="text-lg font-medium text-slate-900">No claims found</p>
+            <p className="text-sm text-slate-500 mt-1 max-w-xs mx-auto">
+              You haven't submitted any claim requests for your beneficiaries yet.
             </p>
           </Card>
         ) : (
           // Claims list
-          claims.map((claim) => (
-            <Card key={claim._id} className="p-4 flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0 bg-white shadow-lg border-0 hover:shadow-xl transition-shadow">
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm md:text-base text-slate-800">
-                  {claim.policyType} Claim
-                </p>
-                <p className="text-xs md:text-sm text-slate-600">
-                  ID: {claim._id.substring(0, 8)}...
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  Amount: ₹{claim.amount.toLocaleString()}
-                </p>
-              </div>
+          <div className="grid grid-cols-1 gap-4">
+            {claims.map((claim) => (
+              <Card key={claim._id} className="p-5 bg-white shadow-sm border border-slate-200 hover:shadow-md transition-all group">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-1">
+                      <span className="text-xs font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                        {claim._id}
+                      </span>
+                      <span className="text-xs text-slate-400">•</span>
+                      <span className="text-xs text-slate-500">
+                        {new Date(claim.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <h3 className="text-base md:text-lg font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
+                      {claim.policyType}
+                    </h3>
+                    <p className="text-sm text-slate-500 mt-1">
+                      {claim.description}
+                    </p>
+                  </div>
 
-              <div className="flex flex-col items-end gap-2 shrink-0">
-                <Badge
-                  variant={claim.status === 'APPROVED' ? 'default' : 'secondary'}
-                  className={`text-xs ${claim.status === 'APPROVED' ? 'bg-green-600' :
-                      claim.status === 'REJECTED' ? 'bg-red-600 text-white' :
-                        'bg-yellow-100 text-yellow-800'
-                    }`}
-                >
-                  {claim.status}
-                </Badge>
-                <span className="text-[10px] text-slate-400">
-                  {new Date(claim.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-            </Card>
-          ))
+                  <div className="flex items-center justify-between w-full md:w-auto gap-6">
+                    <div className="text-right">
+                      <p className="text-xs text-slate-400 uppercase tracking-wider font-medium">Amount</p>
+                      <p className="text-lg font-bold text-slate-900">₹{claim.amount.toLocaleString()}</p>
+                    </div>
+
+                    <Badge
+                      className={`px-3 py-1 text-xs font-semibold uppercase tracking-wide border ${claim.status === 'APPROVED'
+                        ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
+                        : claim.status === 'REJECTED'
+                          ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                          : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
+                        }`}
+                    >
+                      {claim.status}
+                    </Badge>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
         )}
       </div>
     </RouteGuard>
