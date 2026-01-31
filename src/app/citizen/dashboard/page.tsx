@@ -107,9 +107,14 @@ export default function CitizenDashboard() {
               ) : (
                 <div className="mt-4">
                   <p className="text-sm text-slate-500 mb-3">No active policies found.</p>
-                  <Badge variant="outline" className="text-xs border-blue-600 text-blue-600 bg-blue-50">
-                    Check Eligibility
-                  </Badge>
+                  <div className="flex gap-2">
+                    <Badge variant="outline" className="text-xs border-blue-600 text-blue-600 bg-blue-50 cursor-pointer" onClick={() => window.location.href = '/citizen/check-eligibility'}>
+                      Check Eligibility
+                    </Badge>
+                    <Badge className="text-xs bg-teal-600 hover:bg-teal-700 cursor-pointer" onClick={() => window.location.href = '/enrollment'}>
+                      Start Wizard
+                    </Badge>
+                  </div>
                 </div>
               )}
             </Card>

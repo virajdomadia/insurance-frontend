@@ -62,6 +62,11 @@ export function Sidebar() {
               <FileText size={18} className={pathname === '/citizen/claims' ? 'text-blue-600' : 'text-slate-400'} />
               Claims History
             </Link>
+
+            <Link href="/enrollment" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${pathname === '/enrollment' ? 'bg-teal-50 text-teal-700 shadow-sm border border-teal-100' : 'text-teal-600 hover:bg-teal-50 hover:text-teal-900'}`}>
+              <Shield size={18} className={pathname === '/enrollment' ? 'text-teal-600' : 'text-teal-400'} />
+              New Insurance Wizard
+            </Link>
           </div>
         )}
 
@@ -94,6 +99,11 @@ export function Sidebar() {
               <FileText size={18} className={pathname === '/ngo/claims' ? 'text-blue-600' : 'text-slate-400'} />
               Claims Support
             </Link>
+
+            <Link href="/enrollment" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${pathname === '/enrollment' ? 'bg-teal-50 text-teal-700 shadow-sm border border-teal-100' : 'text-teal-600 hover:bg-teal-50 hover:text-teal-900'}`}>
+              <Shield size={18} className={pathname === '/enrollment' ? 'text-teal-600' : 'text-teal-400'} />
+              New Insurance Wizard
+            </Link>
           </div>
         )}
 
@@ -110,6 +120,11 @@ export function Sidebar() {
             <Link href="/admin/check-eligibility" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${pathname === '/admin/check-eligibility' ? 'bg-blue-50 text-blue-700 shadow-sm border border-blue-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>
               <Search size={18} className={pathname === '/admin/check-eligibility' ? 'text-blue-600' : 'text-slate-400'} />
               Check Eligibility
+            </Link>
+
+            <Link href="/enrollment" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${pathname === '/enrollment' ? 'bg-teal-50 text-teal-700 shadow-sm border border-teal-100' : 'text-teal-600 hover:bg-teal-50 hover:text-teal-900'}`}>
+              <Shield size={18} className={pathname === '/enrollment' ? 'text-teal-600' : 'text-teal-400'} />
+              New Insurance Wizard
             </Link>
           </div>
         )}
