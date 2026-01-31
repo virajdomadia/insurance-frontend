@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   Home,
   Shield,
@@ -17,12 +18,22 @@ type Role = "citizen" | "ngo" | "admin";
 export function Sidebar() {
   const pathname = usePathname();
 
-  // 🔥 Synchronous role detection (NO useEffect)
-  let role: Role = "citizen";
+  // Determine role from pathname or localStorage
+  const [role, setRole] = useState<Role>("citizen");
 
-  if (pathname.startsWith("/ngo")) role = "ngo";
-  if (pathname.startsWith("/admin")) role = "admin";
-  if (pathname.startsWith("/citizen")) role = "citizen";
+  useEffect(() => {
+    // 1. Try to get explicit role from storage (set during login)
+    const storedRole = localStorage.getItem("role") as Role;
+    if (storedRole && ["citizen", "ngo", "admin"].includes(storedRole)) {
+      setRole(storedRole);
+      return;
+    }
+
+    // 2. Fallback: Infer from URL if no stored role
+    if (pathname.startsWith("/ngo")) setRole("ngo");
+    else if (pathname.startsWith("/admin")) setRole("admin");
+    else if (pathname.startsWith("/citizen")) setRole("citizen");
+  }, [pathname]);
 
   return (
     <aside className="w-72 bg-white border-r border-slate-200 flex flex-col shadow-sm hidden md:flex transition-all duration-300">

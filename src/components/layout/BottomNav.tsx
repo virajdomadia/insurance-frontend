@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   Home,
   Shield,
@@ -18,11 +19,22 @@ type Role = "citizen" | "ngo" | "admin";
 export function BottomNav() {
   const pathname = usePathname();
 
-  // Determine role from pathname
-  let role: Role = "citizen";
-  if (pathname.startsWith("/ngo")) role = "ngo";
-  if (pathname.startsWith("/admin")) role = "admin";
-  if (pathname.startsWith("/citizen")) role = "citizen";
+  // Determine role from pathname or localStorage
+  const [role, setRole] = useState<Role>("citizen");
+
+  useEffect(() => {
+    // 1. Try to get explicit role from storage
+    const storedRole = localStorage.getItem("role") as Role;
+    if (storedRole && ["citizen", "ngo", "admin"].includes(storedRole)) {
+      setRole(storedRole);
+      return;
+    }
+
+    // 2. Fallback: Infer from URL
+    if (pathname.startsWith("/ngo")) setRole("ngo");
+    else if (pathname.startsWith("/admin")) setRole("admin");
+    else if (pathname.startsWith("/citizen")) setRole("citizen");
+  }, [pathname]);
 
   // Don't show bottom nav on login or home page
   if (pathname === "/" || pathname === "/login") {
@@ -35,16 +47,19 @@ export function BottomNav() {
       { href: "/citizen/check-eligibility", icon: Search, label: "Eligible" },
       { href: "/citizen/policy-wallet", icon: Shield, label: "Wallet" },
       { href: "/citizen/claims", icon: FileText, label: "Claims" },
+      { href: "/enrollment", icon: Shield, label: "Wizard" },
     ],
     ngo: [
       { href: "/ngo/dashboard", icon: Home, label: "Home" },
-      { href: "/ngo/check-eligibility", icon: Search, label: "Check" },
       { href: "/ngo/beneficiaries", icon: ClipboardList, label: "Users" },
       { href: "/ngo/add-beneficiary", icon: UserPlus, label: "Add" },
       { href: "/ngo/claims", icon: FileText, label: "Claims" },
+      { href: "/enrollment", icon: Shield, label: "Wizard" },
     ],
     admin: [
       { href: "/admin/dashboard", icon: Home, label: "Dashboard" },
+      { href: "/admin/check-eligibility", icon: Search, label: "Eligible" },
+      { href: "/enrollment", icon: Shield, label: "Wizard" },
     ],
   };
 
