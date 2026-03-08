@@ -1,73 +1,72 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import User, { UserRole } from '@/models/User';
-import { hashPassword } from '@/lib/auth';
+import User from '@/models/User';
+import bcrypt from 'bcryptjs';
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
     try {
-        await connectDB();
+        const body = await req.json();
+        const { name, email, password } = body;
 
-        const body = await request.json();
-        const { email, password, name, role } = body;
-
-        // Validation
-        if (!email || !password) {
+        // 1. Basic validation
+        if (!name || !email || !password) {
             return NextResponse.json(
-                { error: 'Bad Request', message: 'Email and password are required' },
+                { error: 'All fields are required' },
                 { status: 400 }
             );
         }
 
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return NextResponse.json({ error: 'Bad Request', message: 'Invalid email format' }, { status: 400 });
-        }
-
-        // Password validation
         if (password.length < 8) {
             return NextResponse.json(
-                { error: 'Bad Request', message: 'Password must be at least 8 characters' },
+                { error: 'Password must be at least 8 characters long' },
                 { status: 400 }
             );
         }
 
-        // Role validation
-        const validRoles = [UserRole.CITIZEN, UserRole.NGO];
-        const userRole = role && validRoles.includes(role) ? role : UserRole.CITIZEN;
+        await connectDB();
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email: email.toLowerCase() });
+        // 2. Normalize email
+        const normalizedEmail = email.toLowerCase().trim();
+
+        // 3. Check if user already exists
+        const existingUser = await User.findOne({ email: normalizedEmail });
         if (existingUser) {
-            return NextResponse.json({ error: 'Forbidden', message: 'Email already registered' }, { status: 403 });
+            // Return a generic/obscured error if needed, but for registration explicit might be okay
+            return NextResponse.json(
+                { error: 'User with this email already exists' },
+                { status: 409 } // Conflict
+            );
         }
 
-        // Hash password
-        const passwordHash = await hashPassword(password);
+        // 4. Hash password securely
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Create user
-        const user = await User.create({
-            email: email.toLowerCase(),
-            name,
-            passwordHash,
-            role: userRole,
-            isActive: true,
+        // 5. Create user (Default role: citizen)
+        const newUser = await User.create({
+            name: name.trim(),
+            email: normalizedEmail,
+            password: hashedPassword,
         });
 
-        // Return user (without password hash)
+        // We do not issue a JWT here immediately to enforce a login step (optional)
+        // Or we could auto-login, but for strict security forcing a login is cleaner.
+
         return NextResponse.json(
-            {
-                id: user._id.toString(),
-                email: user.email,
-                name: user.name,
-                role: user.role,
-                isActive: user.isActive,
-                createdAt: user.createdAt,
-            },
+            { success: true, message: 'Registration successful' },
             { status: 201 }
         );
-    } catch (error) {
-        console.error('Register error:', error);
-        return NextResponse.json({ error: 'Internal Server Error', message: 'Registration failed' }, { status: 500 });
+    } catch (error: any) {
+        console.error('Registration Error:', error);
+        // Handle mongoose validation errors
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map((err: any) => err.message);
+            return NextResponse.json({ error: messages.join(', ') }, { status: 400 });
+        }
+
+        return NextResponse.json(
+            { error: 'Internal server error' },
+            { status: 500 }
+        );
     }
 }

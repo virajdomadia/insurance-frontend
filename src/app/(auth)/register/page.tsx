@@ -1,210 +1,206 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
-import { api } from "@/lib/api-client";
-import { Loader2, UserPlus, ArrowRight, CheckCircle2 } from "lucide-react";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+// Extremely strict password rules mapping
+const passwordSchema = z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long." })
+    .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter." })
+    .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter." })
+    .regex(/[0-9]/, { message: "Password must contain at least one number." })
+    .regex(/[^A-Za-z0-9]/, { message: "Password must contain at least one special character." });
+
+const registerSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters."),
+    email: z.string().email("Please enter a valid email address."),
+    password: passwordSchema,
+    confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+});
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
-    const { toast } = useToast();
     const router = useRouter();
+    const [error, setError] = useState<string | null>(null);
+    const [isSuccess, setIsSuccess] = useState(false);
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [role, setRole] = useState("CITIZEN");
-    const [loading, setLoading] = useState(false);
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors, isSubmitting },
+    } = useForm<RegisterFormValues>({
+        resolver: zodResolver(registerSchema),
+    });
 
-    const handleRegister = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
+    const passwordValue = watch("password", "");
 
+    const onSubmit = async (data: RegisterFormValues) => {
         try {
-            await api.register(email, password, name, role);
-
-            toast({
-                title: "Registration successful",
-                description: "Your account has been created. Please log in.",
+            setError(null);
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: data.name,
+                    email: data.email,
+                    password: data.password,
+                }),
             });
 
-            // Redirect to login page
-            router.push("/login?registered=true");
-        } catch (error: any) {
-            toast({
-                title: "Registration failed",
-                description: error.message || "Failed to create account",
-                variant: "destructive",
-            });
-        } finally {
-            setLoading(false);
+            const responseData = await res.json();
+
+            if (!res.ok) {
+                throw new Error(responseData.error || "Registration failed");
+            }
+
+            setIsSuccess(true);
+            setTimeout(() => {
+                router.push("/login");
+            }, 2000);
+        } catch (err: any) {
+            setError(err.message);
         }
     };
 
-    return (
-        <div className="min-h-screen flex w-full bg-slate-50">
-            {/* Left Side - Hero/Branding */}
-            <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="hidden lg:flex w-1/2 bg-blue-600 items-center justify-center p-12 relative overflow-hidden"
-            >
-                {/* Abstract shapes/pattern */}
-                <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                    <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-white blur-3xl"></div>
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-300 blur-3xl"></div>
+    const PasswordStrengthIndicator = () => {
+        const hasMinLength = passwordValue?.length >= 8;
+        const hasUpper = /[A-Z]/.test(passwordValue || "");
+        const hasLower = /[a-z]/.test(passwordValue || "");
+        const hasNumber = /[0-9]/.test(passwordValue || "");
+        const hasSpecial = /[^A-Za-z0-9]/.test(passwordValue || "");
+
+        const metCount = [hasMinLength, hasUpper, hasLower, hasNumber, hasSpecial].filter(Boolean).length;
+        let strengthText = "Weak";
+        let colorClass = "bg-red-500";
+        if (metCount >= 3) { strengthText = "Fair"; colorClass = "bg-yellow-500"; }
+        if (metCount === 5) { strengthText = "Strong"; colorClass = "bg-green-500"; }
+
+        if (!passwordValue) return null;
+
+        return (
+            <div className="mt-2 text-xs">
+                <div className="flex justify-between items-center mb-1 text-slate-400">
+                    <span>Password Strength:</span>
+                    <span className={`font-semibold ${colorClass.replace('bg-', 'text-')}`}>{strengthText}</span>
                 </div>
-
-                <div className="relative z-10 text-white max-w-lg">
-                    <div className="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30">
-                        <UserPlus className="w-8 h-8 text-white" />
-                    </div>
-                    <h1 className="text-4xl font-bold mb-6 leading-tight">
-                        Join the Community
-                    </h1>
-                    <p className="text-blue-100 text-lg leading-relaxed mb-8">
-                        Create an account to access insurance schemes, manage policies, or partner as an NGO to help others.
-                    </p>
-
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-3">
-                            <CheckCircle2 className="w-5 h-5 text-blue-200" />
-                            <span className="text-blue-50">Simplified claims processing</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <CheckCircle2 className="w-5 h-5 text-blue-200" />
-                            <span className="text-blue-50">Government scheme eligibility checks</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <CheckCircle2 className="w-5 h-5 text-blue-200" />
-                            <span className="text-blue-50">Secure digital document storage</span>
-                        </div>
-                    </div>
+                <div className="flex gap-1 h-1.5 w-full">
+                    <div className={`flex-1 rounded-l-full ${passwordValue.length > 0 ? colorClass : 'bg-slate-700'}`}></div>
+                    <div className={`flex-1 ${metCount >= 3 ? colorClass : 'bg-slate-700'}`}></div>
+                    <div className={`flex-1 rounded-r-full ${metCount === 5 ? colorClass : 'bg-slate-700'}`}></div>
                 </div>
-            </motion.div>
-
-            {/* Right Side - Register Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-4 md:p-12 overflow-y-auto">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="w-full max-w-md space-y-8 py-10"
-                >
-                    <div className="text-center lg:text-left">
-                        <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Create an account</h2>
-                        <p className="mt-2 text-slate-600">
-                            Already have an account?{" "}
-                            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                                Sign in
-                            </Link>
-                        </p>
-                    </div>
-
-                    <form onSubmit={handleRegister} className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700" htmlFor="name">
-                                Full Name
-                            </label>
-                            <Input
-                                id="name"
-                                type="text"
-                                placeholder="John Doe"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="h-11 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all"
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700" htmlFor="email">
-                                Email Address
-                            </label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="name@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="h-11 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all"
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700" htmlFor="password">
-                                Password
-                            </label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="Create a password (min. 8 chars)"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="h-11 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all"
-                                required
-                                minLength={8}
-                            />
-                        </div>
-
-                        <div className="space-y-3 pt-2">
-                            <label className="text-sm font-medium text-slate-700">I am a...</label>
-                            <RadioGroup value={role} onValueChange={setRole} className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <RadioGroupItem value="CITIZEN" id="citizen" className="peer sr-only" />
-                                    <Label
-                                        htmlFor="citizen"
-                                        className="flex flex-col items-center justify-between rounded-md border-2 border-slate-200 bg-white p-4 hover:bg-slate-50 hover:text-slate-900 peer-data-[state=checked]:border-blue-600 peer-data-[state=checked]:text-blue-600 cursor-pointer transition-all"
-                                    >
-                                        <UserPlus className="mb-2 h-6 w-6" />
-                                        Citizen
-                                    </Label>
-                                </div>
-                                <div>
-                                    <RadioGroupItem value="NGO" id="ngo" className="peer sr-only" />
-                                    <Label
-                                        htmlFor="ngo"
-                                        className="flex flex-col items-center justify-between rounded-md border-2 border-slate-200 bg-white p-4 hover:bg-slate-50 hover:text-slate-900 peer-data-[state=checked]:border-blue-600 peer-data-[state=checked]:text-blue-600 cursor-pointer transition-all"
-                                    >
-                                        <UserPlus className="mb-2 h-6 w-6" />
-                                        NGO Partner
-                                    </Label>
-                                </div>
-                            </RadioGroup>
-                        </div>
-
-                        <Button
-                            type="submit"
-                            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all mt-6"
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Creating account...
-                                </>
-                            ) : (
-                                <span className="flex items-center justify-center gap-2">
-                                    Create Account <ArrowRight className="w-4 h-4" />
-                                </span>
-                            )}
-                        </Button>
-                    </form>
-
-                    <p className="text-xs text-center text-slate-500 mt-6">
-                        By clicking "Create Account", you agree to our <a href="#" className="underline hover:text-blue-600">Terms of Service</a> and <a href="#" className="underline hover:text-blue-600">Privacy Policy</a>.
-                    </p>
-                </motion.div>
             </div>
-        </div>
+        );
+    };
+
+    if (isSuccess) {
+        return (
+            <div className="text-center py-8">
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-500/20 mb-6">
+                    <CheckCircle2 className="h-10 w-10 text-green-500" />
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-2">Registration Complete</h2>
+                <p className="text-slate-400">Your account has been securely created. Redirecting to login...</p>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <div className="mb-6 text-center">
+                <h2 className="text-2xl font-bold text-white tracking-tight">Create an account</h2>
+                <p className="text-sm text-slate-400 mt-1">Join the Apna Policy network today.</p>
+            </div>
+
+            {error && (
+                <Alert variant="destructive" className="mb-6 bg-red-900/30 border-red-500/50 text-red-200">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                <div className="space-y-2">
+                    <Label htmlFor="name" className="text-slate-300">Full Name</Label>
+                    <Input
+                        id="name"
+                        placeholder="John Doe"
+                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                        {...register("name")}
+                    />
+                    {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="email" className="text-slate-300">Email address</Label>
+                    <Input
+                        id="email"
+                        type="email"
+                        placeholder="john@example.com"
+                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                        {...register("email")}
+                    />
+                    {errors.email && <p className="text-xs text-red-400">{errors.email.message}</p>}
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="password" className="text-slate-300">Secure Password</Label>
+                    <Input
+                        id="password"
+                        type="password"
+                        placeholder="••••••••"
+                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                        {...register("password")}
+                    />
+                    <PasswordStrengthIndicator />
+                    {errors.password && <p className="text-xs text-red-400 mt-1">{errors.password.message}</p>}
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="text-slate-300">Confirm Password</Label>
+                    <Input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                        {...register("confirmPassword")}
+                    />
+                    {errors.confirmPassword && <p className="text-xs text-red-400">{errors.confirmPassword.message}</p>}
+                </div>
+
+                <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white h-11"
+                >
+                    {isSubmitting ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Registering...</>
+                    ) : (
+                        "Create Account"
+                    )}
+                </Button>
+            </form>
+
+            <div className="mt-6 text-center text-sm text-slate-400">
+                Already have an account?{" "}
+                <Link href="/login" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors">
+                    Sign in
+                </Link>
+            </div>
+        </>
     );
 }

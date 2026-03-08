@@ -1,6 +1,5 @@
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
-import AppShell from "@/components/layout/AppShell";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -18,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning>
-        <AppShell>{children}</AppShell>
+        {children}
         <Toaster />
       </body>
     </html>
